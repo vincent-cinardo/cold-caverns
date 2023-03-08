@@ -35,8 +35,6 @@ namespace Assets.Scripts.Pathing
             this.previous = null;
             this.x = tile.x;
             this.y = tile.y;
-            Debug.Log("Pathnode x is " + x);
-            Debug.Log("Pathnode x is " + y);
             g = 0;
             h = 0;
             f = 0;

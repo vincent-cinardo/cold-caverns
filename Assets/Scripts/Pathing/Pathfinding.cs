@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Pathing
 {
@@ -10,38 +9,48 @@ namespace Assets.Scripts.Pathing
         public static List<Pathnode> FindPath(int mapSize, Pathnode start, Pathnode target)
         {
             Heap<Pathnode> open = new Heap<Pathnode>(mapSize);
+            HashSet<Pathnode> openHash = new HashSet<Pathnode>();
             HashSet<Pathnode> closed = new HashSet<Pathnode>();
 
             open.AddNode(start);
+            int nodeCount = 0;
 
             while (open.count > 0)
             {
                 Pathnode current = open.RemoveRoot();
+                openHash.Remove(current);
                 closed.Add(current);
 
-                if (current.x == target.x && current.y == target.y)
+                if ((current.x == target.x && current.y == target.y))
                 {
                     return RetracePath(current);
                 }
-
+                
                 foreach (Pathnode neighbor in current.tile.GetNeighbors())
                 {
-                    if (!neighbor.tile.traversable || closed.Contains(neighbor)) //Remember to check if its walkable first. !neighbor.tile.walkable
-                        continue;
-
-                    int costToNeighbor = current.g + Heuristic(current, neighbor);
-                    if (costToNeighbor < neighbor.g || !(open.Contains(neighbor)))
+                    if (!neighbor.tile.traversable || closed.Contains(neighbor))
                     {
+                        continue;
+                    }
+                    
+                    int costToNeighbor = current.g + Heuristic(current, neighbor);
+                    
+                    if (costToNeighbor < neighbor.g || !(openHash.Contains(neighbor)))
+                    {
+                        nodeCount++;
                         neighbor.previous = current;
                         neighbor.g = costToNeighbor;
                         neighbor.h = Heuristic(neighbor, target);
                         neighbor.f = neighbor.g + neighbor.h;
-                        if (!(open.Contains(neighbor)))
+                        
+                        if (!(openHash.Contains(neighbor)))
+                        {
                             open.AddNode(neighbor);
+                            openHash.Add(neighbor);
+                        }
                     }
                 }
             }
-
             return new List<Pathnode>();
         }
 
