@@ -21,7 +21,6 @@ public class Heap<T> where T : IHeapItem<T>
 
     public void AddNode(T node)
     {
-        Debug.Log(count + " index");
         nodes[count] = node;
         nodes[count].n = count;
         SortUp();
@@ -99,7 +98,7 @@ public class Heap<T> where T : IHeapItem<T>
 
     public bool Contains(T item)
     {
-        foreach(T t in nodes)
+        foreach (T t in nodes)
         {
             if (item.Equals(t))
             {

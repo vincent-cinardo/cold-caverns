@@ -8,7 +8,6 @@ namespace Assets.Scripts.CharacterState.Player
         public PlayerIdle(PlayerController handler) : base(handler)
         { 
             animator.Play("Idle");
-            Debug.Log("Idle");
         }
 
         public override void Update()

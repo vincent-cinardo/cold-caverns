@@ -8,34 +8,29 @@ namespace Assets.Scripts.CharacterState.AI
 {
     public class AIGoTo : AIState
     {
-        //Can make private;
         public List<Pathnode> path;
-        private Vector2 loc;
         private Pathnode start;
         private Pathnode end;
-        public AIGoTo(AIController handler, MapTile mapTile) : base(handler)
-        {
-            path = new List<Pathnode>();
+        private Vector2 loc;
+        private float travelTime;
 
+        /// <summary>
+        /// Create a path to the destination on the map and begin travel.
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="mapTile"></param>
+        /// <param name="stopShort">Specify whether to stop short of the target or occupy the same tile.</param>
+        public AIGoTo(AIController handler, MapTile mapTile, bool stopShort) : base(handler)
+        {
             start = new Pathnode(
                 LocalMap.tiles[(int)(transform.position.x), (int)(transform.position.y)],
                 (int)(transform.position.x),
                 (int)(transform.position.y)
             );
+
             end = new Pathnode(mapTile, mapTile.x, mapTile.y);
-            start.Print();
 
-            int x = (int)(transform.position.x);
-            int y = (int)transform.position.y;
-
-            Debug.Log(x + " and " + y + " are the transform positions to ints");
-            Debug.Log("The map tile [x, y] is " + "[" + LocalMap.tiles[x, y].x + "," + LocalMap.tiles[x, y].y + "]");
-            Debug.Log("Direct retrieval [12,12]" + " [" + LocalMap.tiles[12,12].x);
-
-            foreach (Pathnode node in LocalMap.tiles[x, y].GetNeighbors()) 
-            {
-                node.Print();
-            }
+            path = new List<Pathnode>();
 
             path = Pathfinding.FindPath(
                 LocalMap.mapSizeX * LocalMap.mapSizeY,
@@ -43,21 +38,31 @@ namespace Assets.Scripts.CharacterState.AI
                 end
             );
 
+            if (path.Count > 0 && stopShort)
+            {
+                path.RemoveAt(path.Count - 1);
+            }
+
             loc = new Vector2(transform.position.x, transform.position.y);
-            Debug.Log("T");
+
+            animator.Play("Walk");
         }
 
         public override void Update()
         {
             if (path.Count != 0)
             {
+                float speed = 3.0f;
                 float xDir = path[0].x - loc.x;
                 float yDir = path[0].y - loc.y;
-
-                rigidbody.velocity = new Vector3(xDir, yDir, 0.0f);
                 float angle = Mathf.Rad2Deg * Mathf.Atan2(yDir, xDir);
+                float xDist = Math.Abs(transform.position.x - path[0].x);
+                float yDist = Math.Abs(transform.position.y - path[0].y);
+
+                rigidbody.velocity = new Vector3(xDir, yDir, 0.0f) * speed;
                 transform.rotation = Quaternion.Euler(-angle, 90.0f, -90.0f);
-                if (Math.Abs(transform.position.x - (float)path[0].x) <= 0.1f && Math.Abs(handler.transform.position.y - (float)path[0].y) <= 0.1f)
+
+                if (xDist <= 0.1f && yDist <= 0.1f)
                 {
                     loc = new Vector2(path[0].x, path[0].y);
                     path.RemoveAt(0);
@@ -65,6 +70,7 @@ namespace Assets.Scripts.CharacterState.AI
             }
             else
             {
+                Debug.Log(handler.gameObject.name + "arrived at destination ");
                 rigidbody.velocity = new Vector3(0.0f, 0.0f, 0.0f);
                 handler.state = handler.stateQueue.Dequeue();
             }

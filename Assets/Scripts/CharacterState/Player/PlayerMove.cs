@@ -8,7 +8,6 @@ namespace Assets.Scripts.CharacterState.Player
         public PlayerMove(PlayerController handler) : base(handler)
         {
             animator.Play("Walk");
-            Debug.Log("Move");
         }
         public override void Update()
         {

@@ -10,10 +10,10 @@ namespace Assets.Scripts.CharacterState.AI
         {
             this.handler = handler;
             transform = handler.transform;
-            sheet = handler.gameObject.GetComponent<CharacterSheet>();
+            needs = handler.gameObject.GetComponent<Needs>();
             animator = handler.gameObject.GetComponent<Animator>();
             rigidbody = handler.gameObject.GetComponent<Rigidbody>();
-            needs = handler.gameObject.GetComponent<Needs>();
+            sheet = handler.gameObject.GetComponent<CharacterSheet>();
         }
     }
 }

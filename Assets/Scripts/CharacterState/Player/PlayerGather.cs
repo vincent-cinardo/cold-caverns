@@ -40,8 +40,6 @@ namespace Assets.Scripts.CharacterState.Player
 
             Take this return value and add it to your inventory.
              */
-            
-            handler.nearbyInteractables[0].Gather(Time.deltaTime);
         }
     }
 }
