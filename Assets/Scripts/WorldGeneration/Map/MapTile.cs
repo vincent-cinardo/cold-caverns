@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Pathing;
@@ -33,7 +34,7 @@ public class MapTile : MonoBehaviour
         if (onStart)
         {
             noiseScale = 4.0f;
-            FloorType = Random.Range((int)Flooring.STONE, (int)Flooring.ICE + 1);
+            FloorType = UnityEngine.Random.Range((int)Flooring.STONE, (int)Flooring.ICE + 1);
             Debug.Log(noiseScale);
             SetFloorSprite(FloorType);
         }
@@ -46,7 +47,7 @@ public class MapTile : MonoBehaviour
 
     void SetFloorSprite(int FloorType)
     {
-        float offset = (float) Random.Range(0, 1000);
+        float offset = (float) UnityEngine.Random.Range(0, 1000);
         float sampleX = (((float)x / (float)LocalMap.mapSizeX) * noiseScale);
         float sampleY = (((float)y / (float)LocalMap.mapSizeY) * noiseScale);
         float perlin = Mathf.PerlinNoise(sampleX + 500.0f, sampleY + 500.0f);
@@ -75,13 +76,12 @@ public class MapTile : MonoBehaviour
     }
     public List<Pathnode> GetNeighbors()
     {
+        DateTime before = DateTime.Now;
         float xf = (float)x;
         float yf = (float)y;
         List<Pathnode> neighbors = new List<Pathnode>();
         int mapW = LocalMap.mapSizeX;
         int mapH = LocalMap.mapSizeY;
-
-        Debug.Log("Calling GetNeighbors from " + "[" + x + "," + y + "]");
         
         //West neighbor
         if (x > 0)
@@ -109,7 +109,6 @@ public class MapTile : MonoBehaviour
             if (y < mapH - 1)
                 neighbors.Add(new Pathnode(LocalMap.tiles[x + 1, y + 1], x + 1, y + 1));
         }
-            
 
         //South neighbor
         if (y > 0)

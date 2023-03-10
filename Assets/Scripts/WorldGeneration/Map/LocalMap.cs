@@ -5,12 +5,14 @@ namespace Assets.Scripts.WorldGeneration
     public class LocalMap : MonoBehaviour
     {
         public int mapSize;
+        public GameObject caveWall;
         public static int mapSizeX;
         public static int mapSizeY;
         public static MapTile[,] tiles;
-        public GameObject caveWall;
 
         // Start is called before the first frame update
+        //IMPROVE THE READABILITY OF THIS
+
         void Start()
         {
             mapSizeX = mapSize;
@@ -68,6 +70,16 @@ namespace Assets.Scripts.WorldGeneration
             //Build roads and buildings
             BuildingGeneration buildingGeneration = new BuildingGeneration(tiles, mapSizeX, mapSizeY);
             //buildingGeneration.Generate();
+        }
+
+        public static bool TileIsEmpty(int x, int y)
+        {
+            return tiles[x, y].structure == null;
+        }
+
+        public static void SetStructure(GameObject structure, int x, int y)
+        {
+            tiles[x, y].structure = structure;
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Assets.Scripts.Interact;
 
 namespace Assets.Scripts.Survival
@@ -31,49 +28,81 @@ namespace Assets.Scripts.Survival
 
         void Start()
         {
-            warmth = 100.0f;
-            water = 100.0f;
-            food = 100.0f;
+            warmth = Random.Range(80.0f, 100.0f);
+            water = Random.Range(80.0f, 100.0f);
+            food = Random.Range(80.0f, 100.0f);
             freezeRate = 0.5f;
             thirstRate = 0.2f;
             starveRate = 0.1f;
             provisionManager = GameObject.Find("GameManager").GetComponent<ProvisionManager>();
-            provisionManager.collectiveWarmth += warmth;
+            provisionManager.collectiveFuel += warmth;
             provisionManager.collectiveWater += water;
             provisionManager.collectiveFood += food;
-            provisionManager.maxFood += food;
-            provisionManager.maxWater += water;
-            provisionManager.maxFuel += warmth;
         }
 
         private void FixedUpdate()
         {
+
             float warmthLoss = freezeRate * Time.deltaTime;
             float waterLoss = thirstRate * Time.deltaTime;
             float foodLoss = starveRate * Time.deltaTime;
 
-            warmth -= warmthLoss;
+
             water -= waterLoss;
-            food -=  foodLoss;
-            provisionManager.collectiveWarmth -= warmthLoss;
-            provisionManager.collectiveWater -= waterLoss;
-            provisionManager.collectiveFood -= foodLoss;
+            food -= foodLoss;
 
             if (warmth <= 0.0f)
             {
-                //Die
-                Debug.Log("Died of the cold.");
+                //Add back
+                provisionManager.collectiveFuel -= waterLoss;
+                warmth = 0.0f;
+            }
+            else
+            {
+                warmth -= warmthLoss;
+                provisionManager.collectiveFuel -= waterLoss;
             }
 
             if (water <= 0.0f)
             {
-                Debug.Log("Died of thirst.");
+                //Debug.Log("Died of thirst.");
+                provisionManager.collectiveWater -= waterLoss;
+                water -= 0.0f;
+            }
+            else
+            {
+                provisionManager.collectiveWater -= waterLoss;
+                water -= waterLoss;
             }
 
             if (food <= 0.0f)
             {
-                Debug.Log(gameObject.name + " died of hunger.");
+                //Debug.Log(gameObject.name + " died of hunger.");
+                provisionManager.collectiveFood -= foodLoss;
+                food = 0.0f;
             }
+            else
+            {
+                provisionManager.collectiveFood -= foodLoss;
+                food -= foodLoss;
+            }
+        }
+
+        //ADJUST THESE FUNCTIONS SO THEY ACCOUNT FOR warmth + amount  > 100...
+        public void Warm(float amount)
+        {
+            warmth = warmth + amount > 100.0f ? 100 : warmth + amount;
+            provisionManager.collectiveFuel += amount;
+        }
+        public void Drink(float amount)
+        {
+            water += amount;
+            provisionManager.collectiveWater += amount;
+        }
+        public void Eat(float amount)
+        {
+            food += amount;
+            provisionManager.collectiveFood += amount;
         }
     }
 }

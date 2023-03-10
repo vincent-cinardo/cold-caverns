@@ -41,7 +41,7 @@ namespace Assets.Scripts.WorldGeneration.AutoBuilding
                     mapTile.y = j;
 
 
-                    if (j == y) ;
+                    //if (j == y) ;
                     //Instantiate(connexFront, new Vector3((float)(i), (float)(j - 0.5f), -1.5f), Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f)));
                 }
             }

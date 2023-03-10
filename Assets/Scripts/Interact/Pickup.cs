@@ -22,7 +22,6 @@ namespace Assets.Scripts.Interact
             base.Start();
             Debug.Log("Pickups work");
             item = new Clothing("Jeans", 1, 1, 1, 1);
-            type = TYPE.PICKUP;
             controller = GameObject.Find("Player").GetComponent<Controller>();
             message = "Take " + item.name;
         }

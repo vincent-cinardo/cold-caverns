@@ -7,12 +7,13 @@ namespace Assets.Scripts.Interact
 {
     public abstract class Interactable : MonoBehaviour
     {
-        public MapTile mapTile;
         public ActionListManager actionListManager;
         public Controller controller;
+        public MapTile mapTile;
         public string message;
+
         public enum TYPE {
-            GATHER, PICKUP, STORAGE
+            FUEL, WATER, FOOD
         };
 
         public TYPE type;
@@ -27,26 +28,28 @@ namespace Assets.Scripts.Interact
         //IMPORTANT!!!!!!!!!!!!! In the future, the controller will be passed in.
         //This ensures that both player and AI controllers can be called.
         public virtual void Interact() { }
-
-        public virtual float Gather(float amount) { return 0; }
         public virtual void Take(Item item) { }
 
-        void OnTriggerEnter(Collider other)
+        public virtual void OnTriggerEnter(Collider other)
         {
-            if (other.name == "Player")
+            if (other.name.Contains("Actor"))
             {
                 other.GetComponent<Controller>().nearbyInteractables.Add(this);
-                if (GameObject.Find("UICanvas").GetComponent<ActionListManager>())
-                    Debug.Log("Nice");
-                GameObject.Find("UICanvas").GetComponent<ActionListManager>().AddAction(this);
+                if (other.name.Contains("Player"))
+                {
+                    GameObject.Find("UICanvas").GetComponent<ActionListManager>().AddAction(this);
+                }
             }
         }
-        void OnTriggerExit(Collider other)
+        public virtual void OnTriggerExit(Collider other)
         {
-            if (other.name == "Player")
+            if (other.name.Contains("Actor"))
             {
                 other.GetComponent<Controller>().nearbyInteractables.Remove(this);
-                GameObject.Find("UICanvas").GetComponent<ActionListManager>().RemoveAction(this);
+                if (other.name.Contains("Player"))
+                {
+                    GameObject.Find("UICanvas").GetComponent<ActionListManager>().RemoveAction(this);
+                } 
             }
         }
     }
